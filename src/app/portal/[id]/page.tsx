@@ -173,12 +173,12 @@ export default function ScannerPortalPage() {
           height: { ideal: 720 },
         },
       }, false);
-      scannerRef.current.render((text: string) => recordAttendance(text.trim()), () => {});
+      scannerRef.current.render((text: string) => recordAttendance(text.trim()), () => { });
     }, 200);
   }, [selectedMemberId, recordAttendance]);
 
   const stopScanner = () => {
-    if (scannerRef.current) { scannerRef.current.clear().catch(() => {}); scannerRef.current = null; }
+    if (scannerRef.current) { scannerRef.current.clear().catch(() => { }); scannerRef.current = null; }
     setIsScanning(false);
   };
 
@@ -187,7 +187,7 @@ export default function ScannerPortalPage() {
     if (manualNim.trim()) { recordAttendance(manualNim.trim()); setManualNim(''); }
   };
 
-  useEffect(() => { return () => { if (scannerRef.current) scannerRef.current.clear().catch(() => {}); }; }, []);
+  useEffect(() => { return () => { if (scannerRef.current) scannerRef.current.clear().catch(() => { }); }; }, []);
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-surface-950">
@@ -255,7 +255,7 @@ export default function ScannerPortalPage() {
                     <Keyboard className="w-3 h-3" /> Input Manual
                   </label>
                   <div className="flex gap-2">
-                    <input type="text" placeholder="Ketik NIM..." value={manualNim} onChange={(e) => setManualNim(e.target.value)} className="input-field text-sm" />
+                    <input type="text" placeholder="Ketik No Regis" value={manualNim} onChange={(e) => setManualNim(e.target.value)} className="input-field text-sm" />
                     <button type="submit" disabled={!manualNim.trim() || processing} className="btn-primary px-5 py-2 text-xs shrink-0 disabled:opacity-30">
                       {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'KIRIM'}
                     </button>
@@ -263,9 +263,8 @@ export default function ScannerPortalPage() {
                 </form>
 
                 {scanResult && (
-                  <div className={`p-4 rounded-xl border animate-in zoom-in duration-200 ${
-                    scanResult.success ? (scanResult.type === 'check_in' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-cyan-500/10 border-cyan-500/20') : 'bg-red-500/10 border-red-500/20'
-                  }`}>
+                  <div className={`p-4 rounded-xl border animate-in zoom-in duration-200 ${scanResult.success ? (scanResult.type === 'check_in' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-cyan-500/10 border-cyan-500/20') : 'bg-red-500/10 border-red-500/20'
+                    }`}>
                     <div className="flex gap-3">
                       {scanResult.success ? <CheckCircle2 className={`w-6 h-6 mt-0.5 shrink-0 ${scanResult.type === 'check_in' ? 'text-emerald-400' : 'text-cyan-400'}`} /> : <AlertCircle className="w-6 h-6 mt-0.5 shrink-0 text-red-400" />}
                       <div>
