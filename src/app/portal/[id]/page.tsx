@@ -255,8 +255,29 @@ export default function ScannerPortalPage() {
 
             {isScanning && (
               <div className="space-y-4">
-                <div className="relative rounded-2xl overflow-hidden bg-black border border-surface-200/10">
-                  <div id="qr-reader" className="w-full"></div>
+                <div className="relative rounded-2xl overflow-hidden bg-black border border-surface-200/10 min-h-[300px] flex items-center justify-center">
+                  <div id="qr-reader" className="w-full [&>video]:object-cover"></div>
+                  
+                  {/* Visual Guide Overlay */}
+                  <div className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center">
+                    {/* Focus Box */}
+                    <div className="relative w-[85%] max-w-[300px] h-[140px]">
+                      {/* Corners */}
+                      <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-emerald-400/80 rounded-tl-xl"></div>
+                      <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-emerald-400/80 rounded-tr-xl"></div>
+                      <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-emerald-400/80 rounded-bl-xl"></div>
+                      <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-emerald-400/80 rounded-br-xl"></div>
+                      
+                      {/* Red Laser Line */}
+                      <div className="absolute top-1/2 left-2 right-2 h-0.5 bg-red-500 shadow-[0_0_10px_2px_rgba(239,68,68,0.8)] -translate-y-1/2 opacity-70"></div>
+                    </div>
+
+                    <div className="mt-8">
+                      <p className="text-white text-[11px] font-semibold tracking-wide px-5 py-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 shadow-xl">
+                        Posisikan Barcode Tepat di Garis Merah
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <form onSubmit={handleManualSubmit} className="glass-card p-4">
