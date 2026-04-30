@@ -147,7 +147,6 @@ export default function ScannerPortalPage() {
   }, [id, event, processing, selectedMemberId]);
 
   const startScanner = useCallback(async () => {
-    if (!selectedMemberId) { alert('Pilih nama Anda dulu'); return; }
     setIsScanning(true);
     setScanResult(null);
     const { Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
@@ -235,17 +234,11 @@ export default function ScannerPortalPage() {
         ) : (
           <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
             {!isScanning && (
-              <div className="glass-card p-5">
-                <label className="block text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-2">Siapa yang bertugas?</label>
-                <select value={selectedMemberId} onChange={(e) => setSelectedMemberId(e.target.value)} className="input-field mb-4">
-                  <option value="">-- Pilih Nama Anda --</option>
-                  {groupMembers.map((m: any) => (
-                    <option key={m.mahasiswa_id} value={m.mahasiswa_id}>
-                      {m.mahasiswa?.first_name} {m.mahasiswa?.last_name} ({m.mahasiswa?.no_registrasi})
-                    </option>
-                  ))}
-                </select>
-                <button onClick={startScanner} disabled={!selectedMemberId} className="btn-primary w-full py-4 flex items-center justify-center gap-3 disabled:opacity-30">
+              <div className="glass-card p-5 text-center">
+                <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
+                <p className="text-surface-100 font-semibold mb-1">Akses Diberikan</p>
+                <p className="text-surface-200/50 text-xs mb-5">Siap memindai ID Card mahasiswa</p>
+                <button onClick={startScanner} className="btn-primary w-full py-4 flex items-center justify-center gap-3">
                   <ScanLine className="w-5 h-5" /> MULAI SCANNING
                 </button>
               </div>
