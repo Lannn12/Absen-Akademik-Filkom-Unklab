@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { bimbinganSchema } from '@/lib/validators';
-import { Calendar, Plus, Loader2, Trash2, Users, Clock, AlertCircle, CheckCircle2, X, Save } from 'lucide-react';
+import { Calendar, Plus, Loader2, Trash2, Users, Clock, AlertCircle, CheckCircle2, X, Save, ScanLine } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { TINGKAT_OPTIONS } from '@/lib/constants';
 import { useToast } from '@/app/components/ui/Toast';
