@@ -103,7 +103,7 @@ export default function ScannerPortalPage() {
         .eq('no_registrasi', noRegistrasi.trim())
         .single();
 
-      if (!mhs) throw new Error(`NIM ${noRegistrasi} tidak ditemukan`);
+      if (!mhs) throw new Error(`No. Registrasi ${noRegistrasi} tidak ditemukan`);
       if (mhs.tingkat !== event?.tingkat_target) {
         throw new Error(`Tingkat ${mhs.tingkat} tidak sesuai target Tk ${event?.tingkat_target}`);
       }
@@ -270,13 +270,12 @@ export default function ScannerPortalPage() {
                 </form>
 
                 {scanResult && (
-                  <div className={`p-4 rounded-xl border animate-in zoom-in duration-200 ${scanResult.success ? (scanResult.type === 'check_in' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-cyan-500/10 border-cyan-500/20') : 'bg-red-500/10 border-red-500/20'
-                    }`}>
+                  <div className={`p-4 rounded-xl border animate-in zoom-in duration-200 ${scanResult.success ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'}`}>
                     <div className="flex gap-3">
-                      {scanResult.success ? <CheckCircle2 className={`w-6 h-6 mt-0.5 shrink-0 ${scanResult.type === 'check_in' ? 'text-emerald-400' : 'text-cyan-400'}`} /> : <AlertCircle className="w-6 h-6 mt-0.5 shrink-0 text-red-400" />}
+                      {scanResult.success ? <CheckCircle2 className="w-6 h-6 mt-0.5 shrink-0 text-emerald-400" /> : <AlertCircle className="w-6 h-6 mt-0.5 shrink-0 text-red-400" />}
                       <div>
-                        <p className={`font-bold text-base ${scanResult.success ? (scanResult.type === 'check_in' ? 'text-emerald-400' : 'text-cyan-400') : 'text-red-400'}`}>
-                          {scanResult.success ? (scanResult.type === 'check_in' ? 'CHECK-IN ✓' : 'CHECK-OUT ✓') : 'GAGAL ✗'}
+                        <p className={`font-bold text-base ${scanResult.success ? 'text-emerald-400' : 'text-red-400'}`}>
+                          {scanResult.success ? 'HADIR ✓' : 'GAGAL ✗'}
                         </p>
                         {scanResult.mahasiswa && <p className="text-surface-100 text-sm font-medium">{scanResult.mahasiswa.first_name} {scanResult.mahasiswa.last_name}</p>}
                         <p className="text-surface-200/50 text-xs mt-0.5">{scanResult.message}</p>
@@ -294,8 +293,8 @@ export default function ScannerPortalPage() {
                       {recentScans.map((s, idx) => (
                         <div key={idx} className="flex justify-between items-center text-xs p-2.5 bg-surface-900/80 rounded-lg">
                           <span className="text-surface-100 truncate flex-1 mr-2 font-medium">{s.mahasiswa ? `${s.mahasiswa.first_name} ${s.mahasiswa.last_name}` : '-'}</span>
-                          <span className={`font-bold text-[10px] px-2 py-0.5 rounded ${s.success ? (s.type === 'check_in' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-cyan-500/10 text-cyan-400') : 'bg-red-500/10 text-red-400'}`}>
-                            {s.success ? (s.type === 'check_in' ? 'IN' : 'OUT') : 'FAIL'}
+                          <span className={`font-bold text-[10px] px-2 py-0.5 rounded ${s.success ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                            {s.success ? 'HADIR' : 'FAIL'}
                           </span>
                         </div>
                       ))}
