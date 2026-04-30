@@ -75,7 +75,7 @@ export default function CekAbsenPage() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-600 to-blue-700 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-900/50">
             <History className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Portal Cek Absen</h1>
+          <h1 className="text-2xl font-bold text-surface-100 mb-2">Portal Cek Absen</h1>
           <p className="text-surface-200/60 text-sm">Masukkan No. Regis Anda untuk melihat riwayat kehadiran Bimbingan Akademik</p>
         </div>
 
@@ -119,7 +119,7 @@ export default function CekAbsenPage() {
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] text-surface-200/50 uppercase tracking-widest block">Tingkat</span>
-                  <span className="text-2xl font-black text-white">{mahasiswa.tingkat}</span>
+                  <span className="text-2xl font-black text-surface-100">{mahasiswa.tingkat}</span>
                 </div>
               </div>
             </div>

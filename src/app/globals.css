@@ -1,40 +1,43 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   Design System — Smart Academic Guidance
-   Premium dark theme with vibrant accent colors
+   Design System — Smart Academic Guidance (Filkom Unklab)
+   Professional Light Theme (White & Blue)
    ============================================================================ */
 
 @theme {
-  /* Primary Palette — Deep Indigo / Electric Blue */
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
-  --color-primary-950: #1e1b4b;
+  /* Primary Palette — Filkom Unklab Royal Blue / Navy */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb; /* Main Filkom Blue */
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
 
-  /* Surface Colors — Dark Theme */
-  --color-surface-50: #f8fafc;
-  --color-surface-100: #f1f5f9;
-  --color-surface-200: #e2e8f0;
-  --color-surface-700: #1e293b;
-  --color-surface-800: #0f172a;
-  --color-surface-850: #0c1322;
-  --color-surface-900: #020617;
-  --color-surface-950: #010410;
+  /* Surface Colors — Light Theme
+     We invert the logic so 950 becomes light (bg) and 100 becomes dark (text)
+     This makes all existing Tailwind classes instantly adapt to light mode
+  */
+  --color-surface-50: #0f172a;  /* Darkest Slate (Replaces darkest background) */
+  --color-surface-100: #0f172a; /* Main Text Color (Dark Slate) */
+  --color-surface-200: #475569; /* Secondary Text / Icons (Medium Slate) */
+  --color-surface-700: #e2e8f0; /* Borders / Dividers (Light Slate) */
+  --color-surface-800: #ffffff; /* Card Background (Pure White) */
+  --color-surface-850: #f8fafc; /* Subtle Highlight (Slate 50) */
+  --color-surface-900: #f1f5f9; /* Input Background (Slate 100) */
+  --color-surface-950: #f8fafc; /* Main App Background (Slate 50) */
 
   /* Accent Colors */
   --color-accent-cyan: #06b6d4;
   --color-accent-violet: #8b5cf6;
-  --color-accent-rose: #f43f5e;
-  --color-accent-amber: #f59e0b;
-  --color-accent-emerald: #10b981;
+  --color-accent-rose: #e11d48;
+  --color-accent-amber: #d97706;
+  --color-accent-emerald: #059669;
 
   /* Fonts */
   --font-sans: var(--font-inter), 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -47,7 +50,7 @@
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+  scrollbar-color: rgba(37, 99, 235, 0.3) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -60,7 +63,7 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgba(99, 102, 241, 0.3);
+  background-color: rgba(37, 99, 235, 0.3);
   border-radius: 20px;
 }
 
@@ -73,24 +76,20 @@ body {
 }
 
 /* ============================================================================
-   Glass Morphism Card
+   White Solid Card (replaces Glass Morphism)
    ============================================================================ */
 
 .glass-card {
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.8) 0%,
-    rgba(30, 41, 59, 0.6) 100%
-  );
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  backdrop-filter: blur(20px);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   border-radius: 16px;
   transition: all 0.3s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.08);
+  border-color: rgba(37, 99, 235, 0.15);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.08);
 }
 
 /* ============================================================================
@@ -98,7 +97,7 @@ body {
    ============================================================================ */
 
 .gradient-text {
-  background: linear-gradient(135deg, #818cf8, #06b6d4, #8b5cf6);
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -109,18 +108,16 @@ body {
    ============================================================================ */
 
 .glow-primary {
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15),
-    0 0 60px rgba(99, 102, 241, 0.05);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.15),
+    0 0 40px rgba(37, 99, 235, 0.05);
 }
 
 .glow-cyan {
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.15),
-    0 0 60px rgba(6, 182, 212, 0.05);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
 }
 
 .glow-emerald {
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.15),
-    0 0 60px rgba(16, 185, 129, 0.05);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
 }
 
 /* ============================================================================
@@ -128,21 +125,22 @@ body {
    ============================================================================ */
 
 .btn-primary {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  background: #2563eb;
   color: white;
   padding: 0.625rem 1.5rem;
   border-radius: 12px;
   font-weight: 600;
   font-size: 0.875rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  transition: all 0.2s ease;
+  border: none;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #4338ca, #4f46e5);
+  background: #1d4ed8;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
 }
 
 .btn-primary:active {
@@ -150,45 +148,47 @@ body {
 }
 
 .btn-primary:disabled {
-  opacity: 0.5;
+  background: #cbd5e1;
+  color: #64748b;
+  box-shadow: none;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 .btn-secondary {
-  background: rgba(30, 41, 59, 0.8);
-  color: var(--color-surface-200);
+  background: #ffffff;
+  color: #334155;
   padding: 0.625rem 1.5rem;
   border-radius: 12px;
   font-weight: 600;
   font-size: 0.875rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  transition: all 0.2s ease;
+  border: 1px solid #cbd5e1;
   cursor: pointer;
 }
 
 .btn-secondary:hover {
-  background: rgba(30, 41, 59, 1);
-  border-color: rgba(99, 102, 241, 0.3);
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
+  background: #dc2626;
   color: white;
   padding: 0.625rem 1.5rem;
   border-radius: 12px;
   font-weight: 600;
   font-size: 0.875rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(244, 63, 94, 0.3);
+  transition: all 0.2s ease;
+  border: none;
   cursor: pointer;
 }
 
 .btn-danger:hover {
-  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  background: #b91c1c;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(244, 63, 94, 0.3);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
 /* ============================================================================
@@ -196,24 +196,25 @@ body {
    ============================================================================ */
 
 .input-field {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   border-radius: 12px;
   padding: 0.625rem 1rem;
-  color: var(--color-surface-100);
+  color: #0f172a;
   font-size: 0.875rem;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   width: 100%;
   outline: none;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .input-field::placeholder {
-  color: rgba(148, 163, 184, 0.6);
+  color: #94a3b8;
 }
 
 .input-field:focus {
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 /* ============================================================================
@@ -227,27 +228,27 @@ body {
 }
 
 .data-table thead th {
-  background: rgba(15, 23, 42, 0.8);
-  color: var(--color-primary-300);
+  background: #f1f5f9;
+  color: #475569;
   font-weight: 600;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.875rem 1rem;
   text-align: left;
-  border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .data-table tbody td {
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  color: var(--color-surface-200);
-  border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
   transition: background 0.2s ease;
 }
 
 .data-table tbody tr:hover td {
-  background: rgba(99, 102, 241, 0.05);
+  background: #f8fafc;
 }
 
 /* ============================================================================
@@ -269,18 +270,9 @@ body {
    ============================================================================ */
 
 @keyframes pulse-ring {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(0.9);
-    opacity: 0.7;
-  }
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 0.3; }
+  100% { transform: scale(0.9); opacity: 0.7; }
 }
 
 .scanner-pulse {
@@ -292,20 +284,16 @@ body {
    ============================================================================ */
 
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(30, 41, 59, 0.5) 25%,
-    rgba(51, 65, 85, 0.5) 50%,
-    rgba(30, 41, 59, 0.5) 75%
+    #e2e8f0 25%,
+    #f1f5f9 50%,
+    #e2e8f0 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -324,19 +312,20 @@ body {
   border-radius: 12px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: rgba(148, 163, 184, 0.8);
+  color: #475569;
   transition: all 0.2s ease;
 }
 
 .sidebar-link:hover {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--color-primary-300);
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 
 .sidebar-link.active {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(99, 102, 241, 0.1));
-  color: var(--color-primary-300);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  box-shadow: inset 0 2px 4px rgba(37, 99, 235, 0.05);
 }
 
 /* ============================================================================
@@ -354,33 +343,16 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 4px;
   border-radius: 16px 16px 0 0;
 }
 
-.stat-card.indigo::before {
-  background: linear-gradient(90deg, #4f46e5, #818cf8);
-}
-
-.stat-card.cyan::before {
-  background: linear-gradient(90deg, #0891b2, #06b6d4);
-}
-
-.stat-card.emerald::before {
-  background: linear-gradient(90deg, #059669, #10b981);
-}
-
-.stat-card.rose::before {
-  background: linear-gradient(90deg, #e11d48, #f43f5e);
-}
-
-.stat-card.amber::before {
-  background: linear-gradient(90deg, #d97706, #f59e0b);
-}
-
-.stat-card.violet::before {
-  background: linear-gradient(90deg, #7c3aed, #8b5cf6);
-}
+.stat-card.indigo::before { background: #3b82f6; }
+.stat-card.cyan::before { background: #06b6d4; }
+.stat-card.emerald::before { background: #10b981; }
+.stat-card.rose::before { background: #e11d48; }
+.stat-card.amber::before { background: #f59e0b; }
+.stat-card.violet::before { background: #8b5cf6; }
 
 /* Print Styles */
 @media print {
