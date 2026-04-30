@@ -83,6 +83,7 @@ export default function MahasiswaPage() {
             className="input-field pl-9"
           />
         </div>
+        </div>
       </div>
 
       <div className="glass-card overflow-hidden">
