@@ -8,7 +8,7 @@ import { useToast } from '@/app/components/ui/Toast';
 import type { Bimbingan, ScanResult } from '@/types';
 
 export default function ScanPage() {
-  const { toast, error: toastError } = useToast();
+  const { error: toastError } = useToast();
   const [events, setEvents] = useState<Bimbingan[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string>('');
   const [isScanning, setIsScanning] = useState(false);

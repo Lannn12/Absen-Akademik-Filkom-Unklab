@@ -9,7 +9,6 @@ import { useToast } from '@/app/components/ui/Toast';
 import type { ImportPreview, ImportError } from '@/types';
 
 export default function ImportPage() {
-  const { success: toastSuccess, error: toastError } = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -72,34 +71,27 @@ export default function ImportPage() {
       let fullText = '';
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
         const pageText = textContent.items
-          .map((item: any) => item.str)
+          .map((item: any) => (item as { str: string }).str)
           .join(' ');
         fullText += pageText + '\n';
       }
 
       // Pattern: [NIM/Reg] [Name...] [Optional Prodi] [Optional Semester]
-      // Matches standard student lists where NIM is 7-10 digits
       const rows = fullText.split('\n').filter(line => line.trim().length > 0);
-      const extractedData: Record<string, any>[] = [];
+      const extractedData: Record<string, string | number>[] = [];
 
       rows.forEach(line => {
-        // Simple heuristic: Line starting with or containing a 7-10 digit number
         const nimMatch = line.match(/(\d{7,10})/);
         if (nimMatch) {
           const nim = nimMatch[1];
-          // Remove the NIM from the line to extract the name
-          let remaining = line.replace(nim, '').trim();
+          const remaining = line.replace(nim, '').trim();
           
-          // Heuristic: Name is usually the longest alphabetical part
-          // We'll just take the line as is and clean it up
-          // This is a basic parser - can be refined
           extractedData.push({
             no_registrasi: nim,
             first_name: remaining.split(' ')[0] || 'Mahasiswa',
             last_name: remaining.split(' ').slice(1).join(' ') || '-',
-            program_study_code: 'TI', // Default if not found
+            program_study_code: 'TI',
             semester: 1
           });
         }
@@ -125,11 +117,6 @@ export default function ImportPage() {
 
     rawData.forEach((row, index) => {
       const rowNumber = index + 1;
-      
-      const rawSemester = String(row.SEMESTER || row.semester || '0');
-      const semesterValue = parseInt(rawSemester) || 1;
-
-      const prodiCode = String(row.PROGRAM_STUDY_CODE || row.program_study_code || 'TI').toUpperCase();
       
       const mappedRow = {
         no_registrasi: String(row.no_registrasi || ''),

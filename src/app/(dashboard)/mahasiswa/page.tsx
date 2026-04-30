@@ -7,7 +7,6 @@ import type { Mahasiswa } from '@/types';
 
 export default function MahasiswaPage() {
   const [mahasiswa, setMahasiswa] = useState<Mahasiswa[]>([]);
-  const [selectedMhs, setSelectedMhs] = useState<Mahasiswa | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -143,34 +142,7 @@ export default function MahasiswaPage() {
         )}
       </div>
 
-      {/* Print Template (Hidden in UI, visible in Print) */}
-      {selectedMhs && (
-        <div className="id-card-print hidden flex-col items-center justify-between text-black bg-white p-4 border border-black" style={{ width: '8.5cm', height: '5.5cm', position: 'fixed', left: 0, top: 0, zIndex: 9999 }}>
-          <div className="text-center w-full border-b pb-2 mb-2">
-            <h2 className="text-[10px] font-bold uppercase tracking-widest">Kartu Mahasiswa</h2>
-            <p className="text-[7px] opacity-70">Smart Academic Guidance System</p>
-          </div>
-          <div className="flex gap-4 items-center w-full mb-auto">
-            <div className="w-16 h-20 bg-gray-100 rounded flex items-center justify-center text-[7px] text-gray-400 border border-gray-200">
-              FOTO
-            </div>
-            <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase leading-tight">{selectedMhs.first_name} {selectedMhs.last_name}</p>
-              <p className="text-[9px] font-mono mt-0.5 text-blue-800 font-bold">{selectedMhs.no_registrasi}</p>
-              <p className="text-[8px] mt-2 font-semibold">{selectedMhs.program_study_code}</p>
-              <p className="text-[8px] opacity-80">Tingkat {selectedMhs.tingkat}</p>
-            </div>
-          </div>
-          <div className="w-full flex flex-col items-center border-t pt-2">
-             <img 
-               src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${selectedMhs.no_registrasi}`} 
-               alt="QR Code" 
-               className="w-12 h-12"
-             />
-             <p className="text-[7px] mt-1 font-mono">{selectedMhs.no_registrasi}</p>
-          </div>
-        </div>
-      )}
+      {/* Print Template removed as per UI cleanup */}
     </div>
   );
 }
