@@ -100,7 +100,7 @@ export default function ScannerPortalPage() {
       const { data: mhs } = await supabase
         .from('mahasiswa')
         .select('*')
-        .eq('no_registrasi', noRegistrasi.trim())
+        .ilike('no_registrasi', noRegistrasi.trim())
         .single();
 
       if (!mhs) throw new Error(`No. Registrasi ${noRegistrasi} tidak ditemukan`);

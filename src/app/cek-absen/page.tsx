@@ -31,7 +31,7 @@ export default function CekAbsenPage() {
       const { data: mhs, error: mhsError } = await supabase
         .from('mahasiswa')
         .select('*')
-        .eq('no_registrasi', nim.trim())
+        .ilike('no_registrasi', nim.trim())
         .single();
 
       if (mhsError || !mhs) {
