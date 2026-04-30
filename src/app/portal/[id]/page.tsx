@@ -150,9 +150,30 @@ export default function ScannerPortalPage() {
     if (!selectedMemberId) { alert('Pilih nama Anda dulu'); return; }
     setIsScanning(true);
     setScanResult(null);
-    const { Html5QrcodeScanner, Html5QrcodeScanType } = await import('html5-qrcode');
+    const { Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
     setTimeout(() => {
-      scannerRef.current = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: 250, height: 250 }, supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA] }, false);
+      scannerRef.current = new Html5QrcodeScanner("qr-reader", {
+        fps: 30, // Tinggi untuk respons cepat
+        qrbox: { width: 300, height: 150 }, // Lebar untuk barcode batang
+        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.CODE_93,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E,
+          Html5QrcodeSupportedFormats.ITF,
+          Html5QrcodeSupportedFormats.CODABAR,
+        ],
+        videoConstraints: {
+          facingMode: { ideal: "environment" }, // Kamera belakang HP
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+      }, false);
       scannerRef.current.render((text: string) => recordAttendance(text.trim()), () => {});
     }, 200);
   }, [selectedMemberId, recordAttendance]);
