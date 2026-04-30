@@ -230,7 +230,29 @@ export default function ScannerPortalPage() {
                     </div>
                  )}
 
-                 <button onClick={() => { scannerRef.current?.clear(); setIsScanning(false); }} className="btn-secondary w-full py-3">TUTUP KAMERA</button>
+                 <div className="flex flex-col gap-3">
+                   <button onClick={() => { scannerRef.current?.clear(); setIsScanning(false); }} className="btn-secondary w-full py-3">TUTUP KAMERA</button>
+                   
+                   <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <UserCircle2 className="w-4 h-4 text-surface-200/40" />
+                      </div>
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        const input = (e.target as any).no_registrasi.value;
+                        if (input) onScanSuccess(input);
+                        (e.target as any).no_registrasi.value = '';
+                      }} className="flex gap-2">
+                        <input 
+                          name="no_registrasi"
+                          type="text" 
+                          placeholder="Ketik NIM Manual..." 
+                          className="input-field pl-10 text-sm"
+                        />
+                        <button type="submit" className="btn-primary px-4 py-2 text-xs shrink-0">INPUT</button>
+                      </form>
+                   </div>
+                 </div>
                  
                  <div className="glass-card p-4">
                    <h3 className="text-xs font-bold text-surface-200/40 uppercase mb-3 flex items-center gap-2"><History className="w-3 h-3" /> Riwayat Terakhir</h3>
