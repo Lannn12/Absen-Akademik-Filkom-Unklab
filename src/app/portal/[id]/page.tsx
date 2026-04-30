@@ -156,15 +156,9 @@ export default function ScannerPortalPage() {
       scannerRef.current = new Html5Qrcode("qr-reader");
       
       const config = {
-        fps: 30, // Sangat cepat
-        // Tidak menggunakan qrbox agar seluruh layar kamera mencari barcode (lebih mudah untuk barcode buram/tidak jelas)
-        formatsToSupport: [
-          Html5QrcodeSupportedFormats.QR_CODE,
-          Html5QrcodeSupportedFormats.CODE_128,
-          Html5QrcodeSupportedFormats.CODE_39,
-          Html5QrcodeSupportedFormats.EAN_13,
-          Html5QrcodeSupportedFormats.CODABAR,
-        ],
+        fps: 10, // Turunkan FPS agar mesin (ZXing) punya waktu memproses barcode 1D
+        qrbox: { width: 250, height: 150 }, // Area WAJIB ada agar mesin fokus memproses area ini saja
+        aspectRatio: 1.0,
       };
 
       // Langsung paksa mulai dengan kamera belakang (environment)
