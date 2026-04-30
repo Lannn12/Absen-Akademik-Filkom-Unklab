@@ -49,6 +49,7 @@ export const bimbinganSchema = z.object({
     .min(1, 'Durasi minimal 1 menit')
     .max(480, 'Durasi maksimal 480 menit'),
   absenter_group_id: z.string().uuid('Absenter group wajib dipilih'),
+  access_pin: z.string().min(4, 'PIN minimal 4 karakter').max(6, 'PIN maksimal 6 karakter').optional().or(z.literal('')),
 });
 
 /**

@@ -24,7 +24,10 @@ export default function BimbinganPage() {
     tingkat_target: 1,
     durasi_minimal: 30,
     absenter_group_id: '',
+    access_pin: '',
   });
+
+  const [shareModal, setShareModal] = useState<{ open: boolean; event: Bimbingan | null }>({ open: false, event: null });
 
   const supabase = createClient();
 
@@ -77,6 +80,7 @@ export default function BimbinganPage() {
         tingkat_target: 1,
         durasi_minimal: 30,
         absenter_group_id: '',
+        access_pin: '',
       });
       fetchEvents();
     }
@@ -179,12 +183,14 @@ export default function BimbinganPage() {
                 </div>
               </div>
               
-              <div className="px-5 py-3 border-t border-surface-200/10 bg-surface-800/30 flex items-center justify-between mt-auto">
-                <span className="text-xs text-surface-200/50">Absenter Group:</span>
-                <span className="text-xs font-medium text-surface-100 flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5 text-accent-cyan" />
-                  {event.absenter_group?.nama_group || 'Tidak ada'}
-                </span>
+              <div className="px-5 py-3 border-t border-surface-200/10 bg-surface-800/30 flex items-center justify-between">
+                <span className="text-xs text-surface-200/50">Group: {event.absenter_group?.nama_group || '-'}</span>
+                <button 
+                  onClick={() => setShareModal({ open: true, event })}
+                  className="text-xs font-bold text-primary-400 hover:text-primary-300 flex items-center gap-1"
+                >
+                  <ScanLine className="w-3 h-3" /> Bagikan Portal
+                </button>
               </div>
             </div>
           ))
@@ -264,19 +270,32 @@ export default function BimbinganPage() {
                 <p className="text-xs text-surface-200/40 mt-1.5">Waktu minimal antara check-in dan check-out untuk dianggap valid.</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Petugas Absensi (Group)</label>
-                <select
-                  required
-                  value={formData.absenter_group_id}
-                  onChange={e => setFormData(p => ({ ...p, absenter_group_id: e.target.value }))}
-                  className="input-field"
-                >
-                  <option value="">-- Pilih Group --</option>
-                  {groups.map(g => (
-                    <option key={g.id} value={g.id}>{g.nama_group}</option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Petugas Absensi (Group)</label>
+                  <select
+                    required
+                    value={formData.absenter_group_id}
+                    onChange={e => setFormData(p => ({ ...p, absenter_group_id: e.target.value }))}
+                    className="input-field"
+                  >
+                    <option value="">-- Pilih Group --</option>
+                    {groups.map(g => (
+                      <option key={g.id} value={g.id}>{g.nama_group}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">PIN Portal (4-6 Digit)</label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="1234"
+                    value={formData.access_pin}
+                    onChange={e => setFormData(p => ({ ...p, access_pin: e.target.value }))}
+                    className="input-field"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-surface-200/10 mt-6">
@@ -289,6 +308,59 @@ export default function BimbinganPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Modal Bagikan Portal */}
+      {shareModal.open && shareModal.event && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-0">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShareModal({ open: false, event: null })} />
+          <div className="relative glass-card w-full max-w-sm p-8 animate-in fade-in zoom-in-95 duration-200 text-center">
+            <button onClick={() => setShareModal({ open: false, event: null })} className="absolute top-4 right-4 text-surface-200/40 hover:text-surface-100">
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="w-16 h-16 rounded-2xl bg-primary-600/20 flex items-center justify-center mx-auto mb-4 text-primary-400">
+              <ScanLine className="w-8 h-8" />
+            </div>
+            
+            <h2 className="text-xl font-bold text-surface-100 mb-1">Bagikan Portal</h2>
+            <p className="text-surface-200/50 text-sm mb-6">{shareModal.event.nama_kegiatan}</p>
+            
+            <div className="bg-white p-4 rounded-2xl mx-auto w-fit mb-6">
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${window.location.origin}/portal/${shareModal.event.id}`}
+                alt="QR Code Portal"
+                className="w-40 h-40"
+              />
+            </div>
+            
+            <div className="space-y-3">
+              <div className="text-left">
+                <label className="text-[10px] font-bold text-surface-200/40 uppercase tracking-widest ml-1">Portal Link</label>
+                <div className="flex gap-2 mt-1">
+                  <input 
+                    readOnly 
+                    value={`${window.location.origin}/portal/${shareModal.event.id}`}
+                    className="input-field text-xs py-2 bg-surface-900/50"
+                  />
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/portal/${shareModal.event.id}`);
+                      toastSuccess('Link berhasil disalin!');
+                    }}
+                    className="btn-secondary py-2 px-3 text-xs"
+                  >
+                    Salin
+                  </button>
+                </div>
+              </div>
+              
+              <div className="p-3 rounded-xl bg-primary-500/5 border border-primary-500/10 text-left">
+                <p className="text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-1">PIN AKSES</p>
+                <p className="text-xl font-mono font-bold tracking-[0.3em] text-surface-100">{shareModal.event.access_pin || 'Tidak Ada PIN'}</p>
+              </div>
+            </div>
           </div>
         </div>
       )}
