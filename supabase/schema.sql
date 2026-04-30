@@ -50,10 +50,12 @@ CREATE TABLE IF NOT EXISTS bimbingan (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     nama_kegiatan VARCHAR NOT NULL,
     tanggal DATE NOT NULL,
+    waktu_mulai TIME NOT NULL,
+    waktu_selesai TIME NOT NULL,
     tingkat_target INT NOT NULL CHECK (tingkat_target BETWEEN 1 AND 7),
-    durasi_minimal INT NOT NULL DEFAULT 30,
     absenter_group_id UUID NOT NULL REFERENCES absenter_group(id),
     status VARCHAR NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'closed')),
+    access_pin VARCHAR(6),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

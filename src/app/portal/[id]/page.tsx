@@ -119,20 +119,24 @@ export default function ScannerPortalPage() {
       const mhsInfo = { first_name: mhs.first_name, last_name: mhs.last_name, no_registrasi: mhs.no_registrasi, tingkat: mhs.tingkat };
       let result: ScanResultData;
 
+      const currentTime = new Date();
+      const currentHours = currentTime.getHours().toString().padStart(2, '0');
+      const currentMinutes = currentTime.getMinutes().toString().padStart(2, '0');
+      const timeStr = `${currentHours}:${currentMinutes}`;
+
+      if (event?.waktu_mulai && event?.waktu_selesai) {
+        if (timeStr < event.waktu_mulai.substring(0, 5) || timeStr > event.waktu_selesai.substring(0, 5)) {
+          throw new Error(`Di luar jam bimbingan (${event.waktu_mulai.substring(0, 5)} - ${event.waktu_selesai.substring(0, 5)})`);
+        }
+      }
+
       if (!existing) {
-        const insertData: any = { mahasiswa_id: mhs.id, bimbingan_id: id };
-        if (selectedMemberId) insertData.recorded_by_mhs_id = selectedMemberId;
+        const insertData: any = { mahasiswa_id: mhs.id, bimbingan_id: id, status_valid: true };
         const { error } = await supabase.from('absensi').insert(insertData);
         if (error) throw new Error(error.message);
-        result = { success: true, type: 'check_in', message: 'Check-In Berhasil', mahasiswa: mhsInfo };
-      } else if (!existing.check_out) {
-        const diff = Math.floor((Date.now() - new Date(existing.check_in).getTime()) / 60000);
-        const isValid = diff >= (event?.durasi_minimal || 0);
-        const { error } = await supabase.from('absensi').update({ check_out: new Date().toISOString(), status_valid: isValid }).eq('id', existing.id);
-        if (error) throw new Error(error.message);
-        result = { success: true, type: 'check_out', message: `Check-Out (${diff} min) - ${isValid ? 'VALID' : 'TIDAK VALID'}`, mahasiswa: mhsInfo };
+        result = { success: true, type: 'check_in', message: 'BERHASIL ABSEN ✓', mahasiswa: mhsInfo };
       } else {
-        throw new Error('Mahasiswa sudah Check-Out sebelumnya');
+        throw new Error('Mahasiswa ini sudah tercatat hadir');
       }
 
       setScanResult(result);

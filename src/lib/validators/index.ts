@@ -43,11 +43,8 @@ export const bimbinganSchema = z.object({
     .int()
     .min(1, 'Tingkat minimal 1')
     .max(4, 'Tingkat maksimal 4'),
-  durasi_minimal: z
-    .number()
-    .int()
-    .min(1, 'Durasi minimal 1 menit')
-    .max(480, 'Durasi maksimal 480 menit'),
+  waktu_mulai: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Format waktu tidak valid (HH:mm)'),
+  waktu_selesai: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Format waktu tidak valid (HH:mm)'),
   absenter_group_id: z.string().uuid('Absenter group wajib dipilih'),
   access_pin: z.string().min(4, 'PIN minimal 4 karakter').max(6, 'PIN maksimal 6 karakter').optional().or(z.literal('')),
 });

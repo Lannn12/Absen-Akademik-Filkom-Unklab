@@ -145,32 +145,17 @@ export default function CekAbsenPage() {
                           {abs.bimbingan?.tanggal ? formatTanggal(abs.bimbingan.tanggal) : '-'}
                         </p>
                       </div>
-                      <div className={`px-2.5 py-1 rounded border text-[10px] font-bold uppercase tracking-wider ${
-                        abs.status_valid ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
-                        abs.check_out ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
-                        'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                      }`}>
-                        {abs.status_valid ? 'VALID' : abs.check_out ? 'TDK VALID' : 'BLM CHECK-OUT'}
+                      <div className="px-2.5 py-1 rounded border text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                        HADIR
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-3 mt-1 pt-3 border-t border-surface-200/10">
+                    <div className="mt-1 pt-3 border-t border-surface-200/10">
                       <div>
-                        <p className="text-[10px] font-bold text-surface-200/40 uppercase tracking-wider mb-1">Check-In</p>
+                        <p className="text-[10px] font-bold text-surface-200/40 uppercase tracking-wider mb-1">Waktu Absen</p>
                         <div className="flex items-center gap-1.5">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                           <p className="text-sm font-mono text-surface-200">{formatJam(abs.check_in)}</p>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-surface-200/40 uppercase tracking-wider mb-1">Check-Out</p>
-                        <div className="flex items-center gap-1.5">
-                          {abs.check_out ? (
-                            <CheckCircle2 className={`w-3.5 h-3.5 ${abs.status_valid ? 'text-emerald-400' : 'text-red-400'}`} />
-                          ) : (
-                            <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
-                          )}
-                          <p className="text-sm font-mono text-surface-200">{formatJam(abs.check_out)}</p>
                         </div>
                       </div>
                     </div>

@@ -52,10 +52,12 @@ export interface Bimbingan {
   id: string;
   nama_kegiatan: string;
   tanggal: string;
+  waktu_mulai: string;
+  waktu_selesai: string;
   tingkat_target: number;
-  durasi_minimal: number;
   absenter_group_id: string;
   status: EventStatus;
+  access_pin?: string;
   created_at: string;
   // Joined fields
   absenter_group?: AbsenterGroup;

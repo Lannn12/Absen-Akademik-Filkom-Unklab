@@ -21,8 +21,9 @@ export default function BimbinganPage() {
   const [formData, setFormData] = useState({
     nama_kegiatan: '',
     tanggal: '',
+    waktu_mulai: '',
+    waktu_selesai: '',
     tingkat_target: 1,
-    durasi_minimal: 30,
     absenter_group_id: '',
     access_pin: '',
   });
@@ -77,8 +78,9 @@ export default function BimbinganPage() {
       setFormData({
         nama_kegiatan: '',
         tanggal: '',
+        waktu_mulai: '',
+        waktu_selesai: '',
         tingkat_target: 1,
-        durasi_minimal: 30,
         absenter_group_id: '',
         access_pin: '',
       });
@@ -178,7 +180,7 @@ export default function BimbinganPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-primary-400/60" />
-                    <span>Minimal {event.durasi_minimal} menit</span>
+                    <span>{event.waktu_mulai.substring(0, 5)} - {event.waktu_selesai.substring(0, 5)}</span>
                   </div>
                 </div>
               </div>
@@ -255,19 +257,27 @@ export default function BimbinganPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Durasi Minimal Kehadiran (Menit)</label>
-                <input
-                  type="number"
-                  required
-                  min="1"
-                  max="480"
-                  value={formData.durasi_minimal}
-                  onChange={e => setFormData(p => ({ ...p, durasi_minimal: Number(e.target.value) }))}
-                  className="input-field"
-                  placeholder="30"
-                />
-                <p className="text-xs text-surface-200/40 mt-1.5">Waktu minimal antara check-in dan check-out untuk dianggap valid.</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Jam Mulai</label>
+                  <input
+                    type="time"
+                    required
+                    value={formData.waktu_mulai}
+                    onChange={e => setFormData(p => ({ ...p, waktu_mulai: e.target.value }))}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Jam Selesai</label>
+                  <input
+                    type="time"
+                    required
+                    value={formData.waktu_selesai}
+                    onChange={e => setFormData(p => ({ ...p, waktu_selesai: e.target.value }))}
+                    className="input-field"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
