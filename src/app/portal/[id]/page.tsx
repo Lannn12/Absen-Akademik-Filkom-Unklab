@@ -65,19 +65,26 @@ export default function ScannerPortalPage() {
     const fetchEvent = async () => {
       try {
         const res = await fetch(`/api/portal/${id}`);
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          setError(`Server error: ${text.substring(0, 200)}`);
+          setLoading(false);
+          return;
+        }
         if (res.ok) {
           setEvent(data.event);
           setGroupMembers(data.members || []);
-          // If no PIN is set, auto-authorize
           if (!data.event.has_pin) {
             setIsAuthorized(true);
           }
         } else {
-          setError(data.error || 'Event tidak ditemukan');
+          setError(data.error || `Error ${res.status}: Event tidak ditemukan`);
         }
-      } catch {
-        setError('Gagal memuat data event. Periksa koneksi internet Anda.');
+      } catch (err: any) {
+        setError(`Koneksi gagal: ${err.message}`);
       }
       setLoading(false);
     };
