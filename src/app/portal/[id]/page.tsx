@@ -149,36 +149,45 @@ export default function ScannerPortalPage() {
   const startScanner = useCallback(async () => {
     setIsScanning(true);
     setScanResult(null);
-    const { Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
+    const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
+    
     setTimeout(() => {
-      scannerRef.current = new Html5QrcodeScanner("qr-reader", {
-        fps: 30, // Tinggi untuk respons cepat
-        qrbox: { width: 300, height: 150 }, // Lebar untuk barcode batang
-        supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+      // Create instance directly, no built-in UI
+      scannerRef.current = new Html5Qrcode("qr-reader");
+      
+      const config = {
+        fps: 30, // Sangat cepat
+        // Tidak menggunakan qrbox agar seluruh layar kamera mencari barcode (lebih mudah untuk barcode buram/tidak jelas)
         formatsToSupport: [
           Html5QrcodeSupportedFormats.QR_CODE,
           Html5QrcodeSupportedFormats.CODE_128,
           Html5QrcodeSupportedFormats.CODE_39,
-          Html5QrcodeSupportedFormats.CODE_93,
           Html5QrcodeSupportedFormats.EAN_13,
-          Html5QrcodeSupportedFormats.EAN_8,
-          Html5QrcodeSupportedFormats.UPC_A,
-          Html5QrcodeSupportedFormats.UPC_E,
-          Html5QrcodeSupportedFormats.ITF,
           Html5QrcodeSupportedFormats.CODABAR,
         ],
-        videoConstraints: {
-          facingMode: { ideal: "environment" }, // Kamera belakang HP
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
-      }, false);
-      scannerRef.current.render((text: string) => recordAttendance(text.trim()), () => { });
+      };
+
+      // Langsung paksa mulai dengan kamera belakang (environment)
+      scannerRef.current.start(
+        { facingMode: "environment" },
+        config,
+        (text: string) => recordAttendance(text.trim()),
+        () => { } // ignore scan errors (it errors every frame a barcode isn't found)
+      ).catch((err: any) => {
+        console.error("Kamera gagal dimulai:", err);
+        alert("Gagal mengakses kamera belakang. Pastikan Anda memberikan izin kamera.");
+        setIsScanning(false);
+      });
     }, 200);
   }, [selectedMemberId, recordAttendance]);
 
   const stopScanner = () => {
-    if (scannerRef.current) { scannerRef.current.clear().catch(() => { }); scannerRef.current = null; }
+    if (scannerRef.current) { 
+      scannerRef.current.stop().then(() => {
+        scannerRef.current.clear();
+        scannerRef.current = null;
+      }).catch(() => {});
+    }
     setIsScanning(false);
   };
 
