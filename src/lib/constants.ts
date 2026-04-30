@@ -35,13 +35,11 @@ export const SIDEBAR_MENU = {
     { href: '/mahasiswa/import', label: 'Import Excel', icon: 'FileSpreadsheet' },
     { href: '/bimbingan', label: 'Event Bimbingan', icon: 'Calendar' },
     { href: '/absenter', label: 'Absenter Group', icon: 'Users' },
-    { href: '/scan', label: 'Scan Absensi', icon: 'ScanLine' },
     { href: '/kepatuhan', label: 'Kepatuhan', icon: 'ShieldCheck' },
     { href: '/absenter/kinerja', label: 'Kinerja Absenter', icon: 'BarChart3' },
   ],
   absenter: [
     { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
-    { href: '/scan', label: 'Scan Absensi', icon: 'ScanLine' },
     { href: '/bimbingan', label: 'Event Bimbingan', icon: 'Calendar' },
   ],
   mahasiswa: [
