@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Search, Loader2, GraduationCap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Loader2, GraduationCap, ChevronLeft, ChevronRight, Share2, CheckCircle2 } from 'lucide-react';
 import type { Mahasiswa } from '@/types';
 
 export default function MahasiswaPage() {
@@ -11,9 +11,17 @@ export default function MahasiswaPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [copied, setCopied] = useState(false);
   const limit = 10;
   
   const supabase = createClient();
+
+  const handleCopyLink = () => {
+    const link = `${window.location.origin}/cek-absen`;
+    navigator.clipboard.writeText(`Silakan cek riwayat absensi Bimbingan Akademik Anda melalui link berikut:\n\n${link}\n\nMasukkan No. Registrasi (NIM) Anda untuk melihat data.`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const fetchMahasiswa = useCallback(async () => {
     setLoading(true);
@@ -53,7 +61,16 @@ export default function MahasiswaPage() {
           <p className="text-surface-200/50 text-sm mt-1">Kelola data mahasiswa terdaftar ({total} total)</p>
         </div>
         
-        <div className="relative w-full sm:w-72">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <button 
+            onClick={handleCopyLink}
+            className="btn-secondary whitespace-nowrap flex justify-center items-center gap-2"
+          >
+            {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+            {copied ? 'Tersalin!' : 'Bagikan Link Absen Mahasiswa'}
+          </button>
+          
+          <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-200/40" />
           <input
             type="text"
