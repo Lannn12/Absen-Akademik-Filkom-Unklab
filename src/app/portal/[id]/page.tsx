@@ -23,7 +23,7 @@ export default function ScannerPortalPage() {
   const [event, setEvent] = useState<any>(null);
   const [pin, setPin] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
+  const [developerProfile, setDeveloperProfile] = useState<any>(null);
   const [showSplash, setShowSplash] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,15 +41,21 @@ export default function ScannerPortalPage() {
   const scannerRef = useRef<any>(null);
   const lastScanTime = useRef({ code: '', time: 0 });
 
-  // Fetch event data and user session directly from Supabase
+  // Fetch event data and developer profile directly from Supabase
   useEffect(() => {
-    const fetchEventAndUser = async () => {
+    const fetchEventAndDeveloper = async () => {
       try {
-        // Fetch User first for splash screen
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-          setCurrentUserProfile(profile);
+        // Fetch Developer profile for splash screen
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('role', 'admin')
+          .order('created_at', { ascending: true })
+          .limit(1)
+          .single();
+          
+        if (profile) {
+          setDeveloperProfile(profile);
           setTimeout(() => setShowSplash(false), 2500); // Show splash for 2.5s
         } else {
           setShowSplash(false);
@@ -87,7 +93,7 @@ export default function ScannerPortalPage() {
       }
       setLoading(false);
     };
-    fetchEventAndUser();
+    fetchEventAndDeveloper();
   }, [id]);
 
   const handleVerifyPin = (e: React.FormEvent) => {
@@ -230,19 +236,25 @@ export default function ScannerPortalPage() {
     return (
       <div className="min-h-screen bg-surface-950 flex flex-col items-center justify-center p-6 transition-opacity duration-500">
         <div className="relative animate-jedag-jedug rounded-full shadow-[0_0_40px_rgba(37,99,235,0.3)]">
-          <div className="w-32 h-32 rounded-full overflow-hidden bg-white border-4 border-white flex items-center justify-center">
-            {currentUserProfile?.avatar_url ? (
-              <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+          <div className="w-40 h-40 rounded-full overflow-hidden bg-white border-4 border-white flex items-center justify-center shadow-2xl">
+            {developerProfile?.avatar_url ? (
+              <img src={developerProfile.avatar_url} alt="Developer" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-4xl font-bold text-primary-600">
-                {currentUserProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+              <span className="text-5xl font-bold text-primary-600">
+                {developerProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
               </span>
             )}
           </div>
         </div>
-        <h2 className="mt-8 text-xl font-bold text-surface-100 animate-pulse text-center">
-          Selamat Bertugas,<br/>{currentUserProfile?.full_name?.split(' ')[0] || 'Absenter'}!
-        </h2>
+        <div className="text-center space-y-2 mt-12 animate-pulse">
+          <h2 className="text-surface-200/60 font-bold uppercase tracking-[0.3em] text-xs">
+            Developed By
+          </h2>
+          <h3 className="text-2xl font-black text-surface-100 uppercase tracking-widest">
+            {developerProfile?.full_name || 'Admin'}
+          </h3>
+          <p className="text-primary-500 text-xs font-bold tracking-widest uppercase mt-4">System Initializing...</p>
+        </div>
       </div>
     );
   }
