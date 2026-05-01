@@ -99,8 +99,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <div className="p-5 border-t border-surface-200/30 bg-surface-900/30">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0 text-white font-bold shadow-md shadow-primary-500/20">
-              {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0 text-white font-bold shadow-md shadow-primary-500/20 overflow-hidden">
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                profile?.full_name?.charAt(0)?.toUpperCase() || 'U'
+              )}
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-surface-100 truncate">{profile?.full_name || 'User'}</p>
@@ -122,7 +126,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
           <div className="flex items-center gap-4">
             <span className="text-xs font-medium text-surface-200 hidden sm:inline">{profile?.email}</span>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shadow-md shadow-primary-500/20">{profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}</div>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white font-bold shadow-md shadow-primary-500/20 overflow-hidden">
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                profile?.full_name?.charAt(0)?.toUpperCase() || 'U'
+              )}
+            </div>
           </div>
         </header>
         <main className="flex-1 p-6 sm:p-8 overflow-auto bg-surface-950/40">{children}</main>
