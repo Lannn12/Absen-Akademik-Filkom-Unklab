@@ -9,6 +9,7 @@ import { useToast } from '@/app/components/ui/Toast';
 import type { ImportPreview, ImportError } from '@/types';
 
 export default function ImportPage() {
+  const { success: toastSuccess, error: toastError } = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -71,6 +72,7 @@ export default function ImportPage() {
       let fullText = '';
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
         const pageText = textContent.items
           .map((item: any) => (item as { str: string }).str)
           .join(' ');

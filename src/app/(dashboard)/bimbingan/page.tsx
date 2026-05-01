@@ -539,8 +539,10 @@ export default function BimbinganPage() {
                   />
                   <button 
                     onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/portal/${shareModal.event.id}`);
-                      toastSuccess('Link berhasil disalin!');
+                      if (shareModal.event) {
+                        navigator.clipboard.writeText(`${window.location.origin}/portal/${shareModal.event.id}`);
+                        toastSuccess('Link berhasil disalin!');
+                      }
                     }}
                     className="btn-secondary py-2 px-3 text-xs"
                   >

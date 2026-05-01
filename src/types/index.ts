@@ -41,12 +41,14 @@ export interface AbsenterGroup {
 
 export interface AbsenterMember {
   id: string;
-  user_id: string;
+  user_id?: string;
+  mahasiswa_id?: string;
   group_id: string;
   created_at: string;
   // Joined fields
   profile?: Profile;
   group?: AbsenterGroup;
+  mahasiswa?: Mahasiswa;
 }
 
 export interface Bimbingan {
@@ -88,9 +90,10 @@ export interface ExcelRow {
   first_name: string;
   last_name: string;
   program_study_code: string;
-  gender: string;
+  gender?: 'L' | 'P';
   semester: number;
   no_registrasi: string;
+  email?: string;
 }
 
 export interface ImportError {
