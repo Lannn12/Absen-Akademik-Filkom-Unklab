@@ -263,14 +263,14 @@ export default function AbsenterPage() {
                   <label className="block text-xs font-bold text-primary-400 uppercase tracking-wider mb-3">
                     Cari Anggota BEM dari Data Mahasiswa
                   </label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-200/40" />
+                  <div className="relative group">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-200/40 group-focus-within:text-primary-500 transition-colors" />
                     <input
                       type="text"
-                      placeholder="Ketik Nama atau NIM mahasiswa..."
+                      placeholder="Ketik Nama atau No Regis mahasiswa..."
                       value={searchQuery}
                       onChange={(e) => handleSearchMhs(e.target.value)}
-                      className="input-field pl-9"
+                      className="input-field pl-10 focus:ring-2 focus:ring-primary-500/20"
                     />
                   </div>
 
@@ -321,7 +321,7 @@ export default function AbsenterPage() {
                                 {member.mahasiswa ? `${member.mahasiswa.first_name} ${member.mahasiswa.last_name}` : member.profile?.full_name}
                               </p>
                               <p className="text-[10px] text-primary-400 capitalize">
-                                {member.mahasiswa ? `NIM: ${member.mahasiswa.no_registrasi}` : member.profile?.role}
+                                {member.mahasiswa ? `No Reg: ${member.mahasiswa.no_registrasi}` : member.profile?.role}
                               </p>
                             </div>
                           </div>

@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Smart Academic Guidance — Sistem Absensi Bimbingan Akademik',
+  title: 'Smar — Sistem Absensi Bimbingan Akademik',
   description:
     'Sistem pencatatan kehadiran bimbingan akademik per tingkat mahasiswa dengan barcode scanner, analisis kepatuhan, dan early warning system.',
   keywords: [

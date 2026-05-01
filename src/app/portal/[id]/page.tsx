@@ -131,12 +131,22 @@ export default function ScannerPortalPage() {
       }
 
       if (!existing) {
+        // CHECK-IN: Belum ada record, insert baru
         const insertData: any = { mahasiswa_id: mhs.id, bimbingan_id: id, status_valid: true };
         const { error } = await supabase.from('absensi').insert(insertData);
         if (error) throw new Error(error.message);
-        result = { success: true, type: 'check_in', message: 'BERHASIL ABSEN ✓', mahasiswa: mhsInfo };
+        result = { success: true, type: 'check_in', message: 'CHECK-IN BERHASIL ✓\nSelamat mengikuti bimbingan!', mahasiswa: mhsInfo };
+      } else if (!existing.check_out) {
+        // CHECK-OUT: Sudah check-in tapi belum check-out
+        const { error } = await supabase
+          .from('absensi')
+          .update({ check_out: new Date().toISOString() })
+          .eq('id', existing.id);
+        if (error) throw new Error(error.message);
+        result = { success: true, type: 'check_out', message: 'CHECK-OUT BERHASIL ✓\nTerima kasih telah mengikuti bimbingan', mahasiswa: mhsInfo };
       } else {
-        throw new Error('Mahasiswa ini sudah tercatat hadir');
+        // Sudah check-out
+        throw new Error('Mahasiswa ini sudah selesai (sudah check-out)');
       }
 
       setScanResult(result);
@@ -270,15 +280,31 @@ export default function ScannerPortalPage() {
                 </form>
 
                 {scanResult && (
-                  <div className={`p-4 rounded-xl border animate-in zoom-in duration-200 ${scanResult.success ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'}`}>
+                  <div className={`p-4 rounded-xl border animate-in zoom-in duration-200 ${
+                    scanResult.success 
+                      ? scanResult.type === 'check_out' 
+                        ? 'bg-blue-500/10 border-blue-500/20' 
+                        : 'bg-emerald-500/10 border-emerald-500/20'
+                      : 'bg-red-500/10 border-red-500/20'
+                  }`}>
                     <div className="flex gap-3">
-                      {scanResult.success ? <CheckCircle2 className="w-6 h-6 mt-0.5 shrink-0 text-emerald-400" /> : <AlertCircle className="w-6 h-6 mt-0.5 shrink-0 text-red-400" />}
+                      {scanResult.success ? (
+                        <CheckCircle2 className={`w-6 h-6 mt-0.5 shrink-0 ${scanResult.type === 'check_out' ? 'text-blue-400' : 'text-emerald-400'}`} />
+                      ) : (
+                        <AlertCircle className="w-6 h-6 mt-0.5 shrink-0 text-red-400" />
+                      )}
                       <div>
-                        <p className={`font-bold text-base ${scanResult.success ? 'text-emerald-400' : 'text-red-400'}`}>
-                          {scanResult.success ? 'HADIR ✓' : 'GAGAL ✗'}
+                        <p className={`font-bold text-base ${
+                          scanResult.success 
+                            ? scanResult.type === 'check_out' ? 'text-blue-400' : 'text-emerald-400'
+                            : 'text-red-400'
+                        }`}>
+                          {scanResult.success 
+                            ? scanResult.type === 'check_out' ? 'CHECK-OUT ✓' : 'CHECK-IN ✓'
+                            : 'GAGAL ✗'}
                         </p>
                         {scanResult.mahasiswa && <p className="text-surface-100 text-sm font-medium">{scanResult.mahasiswa.first_name} {scanResult.mahasiswa.last_name}</p>}
-                        <p className="text-surface-200/50 text-xs mt-0.5">{scanResult.message}</p>
+                        <p className="text-surface-200/50 text-xs mt-0.5 whitespace-pre-line">{scanResult.message}</p>
                       </div>
                     </div>
                   </div>
@@ -293,8 +319,14 @@ export default function ScannerPortalPage() {
                       {recentScans.map((s, idx) => (
                         <div key={idx} className="flex justify-between items-center text-xs p-2.5 bg-surface-900/80 rounded-lg">
                           <span className="text-surface-100 truncate flex-1 mr-2 font-medium">{s.mahasiswa ? `${s.mahasiswa.first_name} ${s.mahasiswa.last_name}` : '-'}</span>
-                          <span className={`font-bold text-[10px] px-2 py-0.5 rounded ${s.success ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                            {s.success ? 'HADIR' : 'FAIL'}
+                          <span className={`font-bold text-[10px] px-2 py-0.5 rounded ${
+                            s.success 
+                              ? s.type === 'check_out' 
+                                ? 'bg-blue-500/10 text-blue-400' 
+                                : 'bg-emerald-500/10 text-emerald-400'
+                              : 'bg-red-500/10 text-red-400'
+                          }`}>
+                            {s.success ? (s.type === 'check_out' ? 'OUT' : 'IN') : 'FAIL'}
                           </span>
                         </div>
                       ))}

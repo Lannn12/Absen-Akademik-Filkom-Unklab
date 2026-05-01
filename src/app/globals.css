@@ -79,6 +79,7 @@ body {
    White Solid Card (replaces Glass Morphism)
    ============================================================================ */
 
+@layer components {
 .glass-card {
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.06);
@@ -298,6 +299,7 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
+}
 }
 
 /* ============================================================================

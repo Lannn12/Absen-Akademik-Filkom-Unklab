@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { bimbinganSchema } from '@/lib/validators';
-import { Calendar, Plus, Loader2, Trash2, Users, Clock, AlertCircle, CheckCircle2, X, Save, ScanLine } from 'lucide-react';
+import { Calendar, Plus, Loader2, Trash2, Users, Clock, AlertCircle, CheckCircle2, X, Save, ScanLine, Edit2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { TINGKAT_OPTIONS } from '@/lib/constants';
 import { useToast } from '@/app/components/ui/Toast';
@@ -29,6 +29,16 @@ export default function BimbinganPage() {
   });
 
   const [shareModal, setShareModal] = useState<{ open: boolean; event: Bimbingan | null }>({ open: false, event: null });
+  const [editModal, setEditModal] = useState<{ open: boolean; event: Bimbingan | null }>({ open: false, event: null });
+  const [editFormData, setEditFormData] = useState({
+    nama_kegiatan: '',
+    tanggal: '',
+    waktu_mulai: '',
+    waktu_selesai: '',
+    tingkat_target: 1,
+    absenter_group_id: '',
+    access_pin: '',
+  });
 
   const supabase = createClient();
 
@@ -106,6 +116,48 @@ export default function BimbinganPage() {
     }
   };
 
+  const openEditModal = (event: Bimbingan) => {
+    setEditModal({ open: true, event });
+    setEditFormData({
+      nama_kegiatan: event.nama_kegiatan,
+      tanggal: event.tanggal,
+      waktu_mulai: event.waktu_mulai.substring(0, 5),
+      waktu_selesai: event.waktu_selesai.substring(0, 5),
+      tingkat_target: event.tingkat_target,
+      absenter_group_id: event.absenter_group_id,
+      access_pin: event.access_pin || '',
+    });
+  };
+
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editModal.event) return;
+    
+    setIsSubmitting(true);
+    setError(null);
+
+    const validation = bimbinganSchema.safeParse(editFormData);
+    if (!validation.success) {
+      setError(validation.error.errors[0].message);
+      setIsSubmitting(false);
+      return;
+    }
+
+    const { error: updateError } = await supabase
+      .from('bimbingan')
+      .update(validation.data)
+      .eq('id', editModal.event.id);
+
+    if (updateError) {
+      setError(updateError.message);
+    } else {
+      toastSuccess('Event berhasil diupdate!');
+      setEditModal({ open: false, event: null });
+      fetchEvents();
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
@@ -150,6 +202,13 @@ export default function BimbinganPage() {
                     {event.status === 'active' ? 'Berjalan' : 'Selesai'}
                   </span>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => openEditModal(event)}
+                      className="p-1.5 text-surface-200/40 hover:text-primary-400 hover:bg-primary-500/10 rounded-md transition-colors"
+                      title="Edit Event"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
                     <button 
                       onClick={() => handleUpdateStatus(event.id, event.status)}
                       className="p-1.5 text-surface-200/40 hover:text-primary-400 hover:bg-primary-500/10 rounded-md transition-colors"
@@ -321,6 +380,130 @@ export default function BimbinganPage() {
           </div>
         </div>
       )}
+
+      {/* Modal Edit Event */}
+      {editModal.open && editModal.event && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-0">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditModal({ open: false, event: null })} />
+          <div className="relative glass-card w-full max-w-lg p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between mb-6 border-b border-surface-200/10 pb-4">
+              <h2 className="text-xl font-bold text-surface-100">Edit Event Bimbingan</h2>
+              <button onClick={() => setEditModal({ open: false, event: null })} className="text-surface-200/40 hover:text-surface-100 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {error && (
+              <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleEdit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Nama Kegiatan</label>
+                <input
+                  type="text"
+                  required
+                  value={editFormData.nama_kegiatan}
+                  onChange={e => setEditFormData(p => ({ ...p, nama_kegiatan: e.target.value }))}
+                  className="input-field"
+                  placeholder="Contoh: Bimbingan Akademik Semester Genap"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Tanggal</label>
+                  <input
+                    type="date"
+                    required
+                    value={editFormData.tanggal}
+                    onChange={e => setEditFormData(p => ({ ...p, tanggal: e.target.value }))}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Tingkat Target</label>
+                  <select
+                    required
+                    value={editFormData.tingkat_target}
+                    onChange={e => setEditFormData(p => ({ ...p, tingkat_target: Number(e.target.value) }))}
+                    className="input-field"
+                  >
+                    {TINGKAT_OPTIONS.map(t => (
+                      <option key={t} value={t}>Tingkat {t}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Jam Mulai</label>
+                  <input
+                    type="time"
+                    required
+                    value={editFormData.waktu_mulai}
+                    onChange={e => setEditFormData(p => ({ ...p, waktu_mulai: e.target.value }))}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Jam Selesai</label>
+                  <input
+                    type="time"
+                    required
+                    value={editFormData.waktu_selesai}
+                    onChange={e => setEditFormData(p => ({ ...p, waktu_selesai: e.target.value }))}
+                    className="input-field"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">Petugas Absensi (Group)</label>
+                  <select
+                    required
+                    value={editFormData.absenter_group_id}
+                    onChange={e => setEditFormData(p => ({ ...p, absenter_group_id: e.target.value }))}
+                    className="input-field"
+                  >
+                    <option value="">-- Pilih Group --</option>
+                    {groups.map(g => (
+                      <option key={g.id} value={g.id}>{g.nama_group}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-surface-200/80 mb-1.5">PIN Portal (4-6 Digit)</label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="1234"
+                    value={editFormData.access_pin}
+                    onChange={e => setEditFormData(p => ({ ...p, access_pin: e.target.value }))}
+                    className="input-field"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-surface-200/10 mt-6">
+                <button type="button" onClick={() => setEditModal({ open: false, event: null })} className="btn-secondary">
+                  Batal
+                </button>
+                <button type="submit" disabled={isSubmitting} className="btn-primary flex items-center gap-2">
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Modal Bagikan Portal */}
       {shareModal.open && shareModal.event && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-0">

@@ -59,45 +59,6 @@ export function calculateTingkat(semester: number): number {
 }
 
 /**
- * Get compliance status based on percentage.
- */
-export function getComplianceStatus(
-  percentage: number
-): 'patuh' | 'perlu_perhatian' | 'tidak_patuh' {
-  if (percentage >= 80) return 'patuh';
-  if (percentage >= 50) return 'perlu_perhatian';
-  return 'tidak_patuh';
-}
-
-/**
- * Get compliance status label in Indonesian.
- */
-export function getComplianceLabel(
-  status: 'patuh' | 'perlu_perhatian' | 'tidak_patuh'
-): string {
-  const labels = {
-    patuh: 'Patuh',
-    perlu_perhatian: 'Perlu Perhatian',
-    tidak_patuh: 'Tidak Patuh',
-  };
-  return labels[status];
-}
-
-/**
- * Get compliance badge color class.
- */
-export function getComplianceColor(
-  status: 'patuh' | 'perlu_perhatian' | 'tidak_patuh'
-): string {
-  const colors = {
-    patuh: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-    perlu_perhatian: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-    tidak_patuh: 'bg-red-500/15 text-red-400 border-red-500/30',
-  };
-  return colors[status];
-}
-
-/**
  * Get risk level color.
  */
 export function getRiskColor(level: 'high' | 'medium' | 'low'): string {

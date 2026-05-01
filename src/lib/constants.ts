@@ -2,7 +2,7 @@
  * Application-wide constants
  */
 
-export const APP_NAME = 'Smart Academic Guidance';
+export const APP_NAME = 'Sistemnya Arlan';
 export const APP_DESCRIPTION = 'Sistem Absensi Bimbingan Akademik per Tingkat';
 
 export const TINGKAT_OPTIONS = [1, 2, 3, 4] as const;
@@ -23,11 +23,6 @@ export const EVENT_STATUS_OPTIONS = [
   { value: 'closed', label: 'Selesai' },
 ] as const;
 
-export const COMPLIANCE_THRESHOLDS = {
-  PATUH: 80,
-  PERLU_PERHATIAN: 50,
-} as const;
-
 export const SIDEBAR_MENU = {
   admin: [
     { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
@@ -35,8 +30,8 @@ export const SIDEBAR_MENU = {
     { href: '/mahasiswa/import', label: 'Import Excel', icon: 'FileSpreadsheet' },
     { href: '/bimbingan', label: 'Event Bimbingan', icon: 'Calendar' },
     { href: '/absenter', label: 'Absenter Group', icon: 'Users' },
-    { href: '/kepatuhan', label: 'Kepatuhan', icon: 'ShieldCheck' },
-    { href: '/absenter/kinerja', label: 'Kinerja Absenter', icon: 'BarChart3' },
+    { href: '/kepatuhan', label: 'Kehadiran', icon: 'ClipboardCheck' },
+    { href: '/users', label: 'Manajemen User', icon: 'UserCog' },
   ],
   absenter: [
     { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
@@ -44,6 +39,6 @@ export const SIDEBAR_MENU = {
   ],
   mahasiswa: [
     { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
-    { href: '/kepatuhan', label: 'Kehadiran Saya', icon: 'ShieldCheck' },
+    { href: '/kepatuhan', label: 'Kehadiran Saya', icon: 'ClipboardCheck' },
   ],
 } as const;

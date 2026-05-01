@@ -83,14 +83,14 @@ export default function CekAbsenPage() {
           <form onSubmit={handleSearch} className="space-y-4">
             <div>
               <label className="block text-[10px] font-bold text-surface-200/40 uppercase tracking-widest mb-2">No. Registrasi</label>
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-200/40" />
+              <div className="relative group">
+                <Search className="absolute left-[18px] top-1/2 -translate-y-1/2 w-5 h-5 text-surface-200/40 group-focus-within:text-primary-500 transition-colors" />
                 <input
                   type="text"
                   placeholder="Ketik No. Regis..."
                   value={nim}
                   onChange={(e) => setNim(e.target.value)}
-                  className="input-field pl-12 py-4 text-lg w-full bg-surface-900 focus:bg-surface-800 transition-colors"
+                  className="input-field pl-[48px] py-4 text-lg w-full bg-surface-900 focus:bg-surface-800 focus:ring-2 focus:ring-primary-500/20 transition-all"
                   autoFocus
                 />
               </div>

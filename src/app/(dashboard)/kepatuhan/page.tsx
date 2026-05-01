@@ -2,21 +2,28 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Search, Loader2, ShieldCheck, AlertTriangle, XOctagon, FileDown } from 'lucide-react';
-import { getComplianceStatus, getComplianceLabel, getComplianceColor, exportToCSV } from '@/lib/utils';
+import { Search, Loader2, ClipboardCheck, Users, Calendar, FileDown } from 'lucide-react';
+import { exportToCSV } from '@/lib/utils';
 import { TINGKAT_OPTIONS } from '@/lib/constants';
-import type { Mahasiswa, ComplianceData } from '@/types';
+import type { Mahasiswa } from '@/types';
 
-export default function KepatuhanPage() {
-  const [data, setData] = useState<ComplianceData[]>([]);
+interface AttendanceData {
+  mahasiswa_id: string;
+  mahasiswa: Mahasiswa;
+  total_wajib: number;
+  total_hadir: number;
+  total_valid: number;
+}
+
+export default function KehadiranPage() {
+  const [data, setData] = useState<AttendanceData[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterTingkat, setFilterTingkat] = useState<string>('');
-  const [filterStatus, setFilterStatus] = useState<string>('');
 
   const supabase = createClient();
 
-  const fetchKepatuhan = useCallback(async () => {
+  const fetchKehadiran = useCallback(async () => {
     setLoading(true);
     
     const { data: userData } = await supabase.auth.getUser();
@@ -69,14 +76,11 @@ export default function KepatuhanPage() {
       }
     });
 
-    // 4. Calculate Compliance
-    let complianceData: ComplianceData[] = mhsData.map(mhs => {
+    // 4. Transform Data
+    const attendanceData: AttendanceData[] = mhsData.map(mhs => {
       const total_wajib = eventCounts[mhs.tingkat] || 0;
       const total_hadir = absensiCounts[mhs.id].total;
       const total_valid = absensiCounts[mhs.id].valid;
-      
-      const persentase = total_wajib === 0 ? 0 : Math.round((total_valid / total_wajib) * 100);
-      const status = getComplianceStatus(persentase);
 
       return {
         mahasiswa_id: mhs.id,
@@ -84,57 +88,45 @@ export default function KepatuhanPage() {
         total_wajib,
         total_hadir,
         total_valid,
-        persentase,
-        status
       };
     });
 
-    // 5. Apply Status Filter
-    if (filterStatus) {
-      complianceData = complianceData.filter(d => d.status === filterStatus);
-    }
-
-    setData(complianceData);
+    setData(attendanceData);
     setLoading(false);
-  }, [supabase, search, filterTingkat, filterStatus]);
+  }, [supabase, search, filterTingkat]);
 
   useEffect(() => {
-    const timer = setTimeout(() => fetchKepatuhan(), 300);
+    const timer = setTimeout(() => fetchKehadiran(), 300);
     return () => clearTimeout(timer);
-  }, [fetchKepatuhan]);
+  }, [fetchKehadiran]);
 
   // Statistics for summary cards
   const stats = {
     total: data.length,
-    patuh: data.filter(d => d.status === 'patuh').length,
-    perhatian: data.filter(d => d.status === 'perlu_perhatian').length,
-    tidakPatuh: data.filter(d => d.status === 'tidak_patuh').length,
+    totalWajib: data.reduce((acc, curr) => acc + curr.total_wajib, 0),
+    totalValid: data.reduce((acc, curr) => acc + curr.total_valid, 0),
   };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold gradient-text">Monitoring Kepatuhan</h1>
-        <p className="text-surface-200/50 text-sm mt-1">Pantau persentase kehadiran valid per mahasiswa</p>
+        <h1 className="text-2xl font-bold gradient-text">Monitoring Kehadiran</h1>
+        <p className="text-surface-200/50 text-sm mt-1">Pantau catatan kehadiran per mahasiswa</p>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="glass-card p-4">
-          <p className="text-xs text-surface-200/60 mb-1">Total Mahasiswa</p>
+          <p className="text-xs text-surface-200/60 mb-1 flex items-center gap-1"><Users className="w-3 h-3" /> Total Mahasiswa</p>
           <p className="text-2xl font-bold text-surface-100">{stats.total}</p>
         </div>
-        <div className="glass-card p-4 border-b-2 border-b-emerald-500/50">
-          <p className="text-xs text-surface-200/60 mb-1 flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-emerald-400" /> Patuh (≥80%)</p>
-          <p className="text-2xl font-bold text-emerald-400">{stats.patuh}</p>
+        <div className="glass-card p-4">
+          <p className="text-xs text-surface-200/60 mb-1 flex items-center gap-1"><Calendar className="w-3 h-3 text-blue-400" /> Total Wajib Hadir</p>
+          <p className="text-2xl font-bold text-blue-400">{stats.totalWajib}</p>
         </div>
-        <div className="glass-card p-4 border-b-2 border-b-amber-500/50">
-          <p className="text-xs text-surface-200/60 mb-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3 text-amber-400" /> Perhatian (50-79%)</p>
-          <p className="text-2xl font-bold text-amber-400">{stats.perhatian}</p>
-        </div>
-        <div className="glass-card p-4 border-b-2 border-b-red-500/50">
-          <p className="text-xs text-surface-200/60 mb-1 flex items-center gap-1"><XOctagon className="w-3 h-3 text-red-400" /> Tidak Patuh (&lt;50%)</p>
-          <p className="text-2xl font-bold text-red-400">{stats.tidakPatuh}</p>
+        <div className="glass-card p-4">
+          <p className="text-xs text-surface-200/60 mb-1 flex items-center gap-1"><ClipboardCheck className="w-3 h-3 text-emerald-400" /> Total Hadir (Valid)</p>
+          <p className="text-2xl font-bold text-emerald-400">{stats.totalValid}</p>
         </div>
       </div>
 
@@ -142,14 +134,14 @@ export default function KepatuhanPage() {
       <div className="glass-card p-4 flex flex-col sm:flex-row gap-4 items-end">
         <div className="w-full sm:w-1/3">
           <label className="block text-xs font-medium text-surface-200/60 mb-1.5">Pencarian</label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-200/40" />
+          <div className="relative group">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-200/40 group-focus-within:text-primary-500 transition-colors" />
             <input
               type="text"
               placeholder="Nama atau NIM..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field pl-9 py-2 text-sm"
+              className="input-field pl-10 py-2 text-sm focus:ring-2 focus:ring-primary-500/20"
             />
           </div>
         </div>
@@ -164,16 +156,6 @@ export default function KepatuhanPage() {
           </select>
         </div>
 
-        <div className="w-full sm:w-1/4">
-          <label className="block text-xs font-medium text-surface-200/60 mb-1.5">Filter Status</label>
-          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="input-field py-2 text-sm">
-            <option value="">Semua Status</option>
-            <option value="patuh">Patuh (≥80%)</option>
-            <option value="perlu_perhatian">Perlu Perhatian (50-79%)</option>
-            <option value="tidak_patuh">Tidak Patuh (&lt;50%)</option>
-          </select>
-        </div>
-
         <div className="w-full sm:w-auto sm:ml-auto">
           <button 
             onClick={() => {
@@ -182,12 +164,10 @@ export default function KepatuhanPage() {
                 Nama: `${d.mahasiswa.first_name} ${d.mahasiswa.last_name}`,
                 Prodi: d.mahasiswa.program_study_code,
                 Tingkat: d.mahasiswa.tingkat,
-                Wajib: d.total_wajib,
+                Wajib_Hadir: d.total_wajib,
                 Hadir_Valid: d.total_valid,
-                Persentase: `${d.persentase}%`,
-                Status: getComplianceLabel(d.status)
               }));
-              exportToCSV(exportData, `Laporan_Kepatuhan_${new Date().toISOString().split('T')[0]}`);
+              exportToCSV(exportData, `Laporan_Kehadiran_${new Date().toISOString().split('T')[0]}`);
             }}
             className="btn-secondary py-2 text-sm flex items-center justify-center gap-2 w-full"
           >
@@ -202,11 +182,11 @@ export default function KepatuhanPage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center h-64">
               <Loader2 className="w-8 h-8 animate-spin text-primary-400 mb-2" />
-              <p className="text-surface-200/50 text-sm">Menghitung data kepatuhan...</p>
+              <p className="text-surface-200/50 text-sm">Memuat data kehadiran...</p>
             </div>
           ) : data.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center px-4">
-              <ShieldCheck className="w-12 h-12 text-surface-200/20 mb-4" />
+              <ClipboardCheck className="w-12 h-12 text-surface-200/20 mb-4" />
               <p className="text-surface-100 font-medium">Tidak ada data</p>
               <p className="text-surface-200/50 text-sm mt-1">Data dengan filter tersebut tidak ditemukan.</p>
             </div>
@@ -216,10 +196,9 @@ export default function KepatuhanPage() {
                 <tr>
                   <th>Mahasiswa</th>
                   <th>Prodi / Tk.</th>
-                  <th className="text-center">Wajib Hadir</th>
-                  <th className="text-center">Hadir (Valid)</th>
-                  <th>Persentase</th>
-                  <th>Status</th>
+                  <th className="text-center">Wajib Hadir (Event)</th>
+                  <th className="text-center">Kehadiran (Valid)</th>
+                  <th className="text-center">Tidak Hadir / Belum Valid</th>
                 </tr>
               </thead>
               <tbody>
@@ -233,26 +212,10 @@ export default function KepatuhanPage() {
                       <p className="text-surface-200">{item.mahasiswa.program_study_code}</p>
                       <p className="text-xs text-surface-200/50 mt-0.5">Tingkat {item.mahasiswa.tingkat}</p>
                     </td>
-                    <td className="text-center font-medium">{item.total_wajib} Event</td>
-                    <td className="text-center font-medium text-primary-400">{item.total_valid} Kali</td>
-                    <td>
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 h-2 bg-surface-800 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full rounded-full transition-all duration-1000"
-                            style={{ 
-                              width: `${item.persentase}%`,
-                              backgroundColor: item.persentase >= 80 ? '#10b981' : item.persentase >= 50 ? '#f59e0b' : '#ef4444' 
-                            }}
-                          />
-                        </div>
-                        <span className="text-sm font-bold">{item.persentase}%</span>
-                      </div>
-                    </td>
-                    <td>
-                      <span className={`badge ${getComplianceColor(item.status)}`}>
-                        {getComplianceLabel(item.status)}
-                      </span>
+                    <td className="text-center font-medium">{item.total_wajib}</td>
+                    <td className="text-center font-medium text-emerald-400">{item.total_valid}</td>
+                    <td className="text-center font-medium text-amber-400">
+                      {Math.max(0, item.total_wajib - item.total_valid)}
                     </td>
                   </tr>
                 ))}
