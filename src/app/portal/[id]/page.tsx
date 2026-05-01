@@ -23,6 +23,8 @@ export default function ScannerPortalPage() {
   const [event, setEvent] = useState<any>(null);
   const [pin, setPin] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
+  const [showSplash, setShowSplash] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pinError, setPinError] = useState('');
@@ -39,10 +41,20 @@ export default function ScannerPortalPage() {
   const scannerRef = useRef<any>(null);
   const lastScanTime = useRef({ code: '', time: 0 });
 
-  // Fetch event data directly from Supabase
+  // Fetch event data and user session directly from Supabase
   useEffect(() => {
-    const fetchEvent = async () => {
+    const fetchEventAndUser = async () => {
       try {
+        // Fetch User first for splash screen
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+          setCurrentUserProfile(profile);
+          setTimeout(() => setShowSplash(false), 2500); // Show splash for 2.5s
+        } else {
+          setShowSplash(false);
+        }
+
         const { data, error: fetchError } = await supabase
           .from('bimbingan')
           .select('*, absenter_group(id, nama_group)')
@@ -75,7 +87,7 @@ export default function ScannerPortalPage() {
       }
       setLoading(false);
     };
-    fetchEvent();
+    fetchEventAndUser();
   }, [id]);
 
   const handleVerifyPin = (e: React.FormEvent) => {
@@ -206,11 +218,34 @@ export default function ScannerPortalPage() {
 
   useEffect(() => { return () => { if (scannerRef.current) scannerRef.current.clear().catch(() => { }); }; }, []);
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-950">
-      <div className="text-center"><Loader2 className="w-10 h-10 animate-spin text-primary-400 mx-auto mb-3" /><p className="text-surface-200/50 text-sm">Memuat Portal...</p></div>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-surface-950">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+      </div>
+    );
+  }
+
+  if (showSplash) {
+    return (
+      <div className="min-h-screen bg-surface-950 flex flex-col items-center justify-center p-6 transition-opacity duration-500">
+        <div className="relative animate-jedag-jedug rounded-full shadow-[0_0_40px_rgba(37,99,235,0.3)]">
+          <div className="w-32 h-32 rounded-full overflow-hidden bg-white border-4 border-white flex items-center justify-center">
+            {currentUserProfile?.avatar_url ? (
+              <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-4xl font-bold text-primary-600">
+                {currentUserProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+              </span>
+            )}
+          </div>
+        </div>
+        <h2 className="mt-8 text-xl font-bold text-surface-100 animate-pulse text-center">
+          Selamat Bertugas,<br/>{currentUserProfile?.full_name?.split(' ')[0] || 'Absenter'}!
+        </h2>
+      </div>
+    );
+  }
 
   if (error) return (
     <div className="min-h-screen flex items-center justify-center bg-surface-950 p-6">
