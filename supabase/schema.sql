@@ -12,8 +12,30 @@ CREATE TABLE IF NOT EXISTS profiles (
     email VARCHAR NOT NULL,
     full_name VARCHAR NOT NULL,
     role VARCHAR NOT NULL CHECK (role IN ('admin', 'absenter', 'mahasiswa')),
+    avatar_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ============================================================================
+-- STORAGE SETUP: AVATARS
+-- (Jika terjadi error pada fungsi di bawah, buat bucket 'avatars' manual di Dashboard Supabase
+-- dengan tipe "Public Bucket")
+-- ============================================================================
+insert into storage.buckets (id, name, public) 
+values ('avatars', 'avatars', true) 
+on conflict (id) do nothing;
+
+create policy "Avatar images are publicly accessible."
+  on storage.objects for select
+  using ( bucket_id = 'avatars' );
+
+create policy "Anyone can upload an avatar."
+  on storage.objects for insert
+  with check ( bucket_id = 'avatars' );
+
+create policy "Anyone can update their avatar."
+  on storage.objects for update
+  using ( bucket_id = 'avatars' );
 
 -- 2. Mahasiswa
 CREATE TABLE IF NOT EXISTS mahasiswa (

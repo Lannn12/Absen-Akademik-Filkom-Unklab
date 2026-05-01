@@ -111,9 +111,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <p className="text-[11px] text-primary-500 font-bold uppercase tracking-wider">{profile?.role}</p>
             </div>
           </div>
-          <button id="logout-button" onClick={handleLogout} className="flex items-center justify-center gap-2 text-sm font-bold text-red-500 bg-red-50 hover:bg-red-100 transition-colors w-full py-2.5 rounded-xl border border-red-100">
-            <LogOut className="w-4 h-4" /><span>Keluar Akses</span>
-          </button>
+          <div className="flex flex-col gap-2">
+            <Link href="/settings" onClick={() => setSidebarOpen(false)} className="flex items-center justify-center gap-2 text-sm font-bold text-surface-200 bg-white hover:bg-surface-900 transition-colors w-full py-2.5 rounded-xl border border-surface-200/30 shadow-sm">
+              <UserCog className="w-4 h-4" /><span>Pengaturan Profil</span>
+            </Link>
+            <button id="logout-button" onClick={handleLogout} className="flex items-center justify-center gap-2 text-sm font-bold text-red-500 bg-red-50 hover:bg-red-100 transition-colors w-full py-2.5 rounded-xl border border-red-100">
+              <LogOut className="w-4 h-4" /><span>Keluar Akses</span>
+            </button>
+          </div>
         </div>
       </aside>
 
