@@ -18,6 +18,9 @@ export default function BimbinganPage() {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
+  const [successSplash, setSuccessSplash] = useState<Bimbingan | null>(null);
+
   const [formData, setFormData] = useState({
     nama_kegiatan: '',
     tanggal: '',
@@ -63,7 +66,17 @@ export default function BimbinganPage() {
   useEffect(() => {
     fetchEvents();
     fetchGroups();
-  }, [fetchEvents, fetchGroups]);
+    
+    // Fetch profile for the splash screen
+    const fetchProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        if (data) setCurrentUserProfile(data);
+      }
+    };
+    fetchProfile();
+  }, [fetchEvents, fetchGroups, supabase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,16 +97,34 @@ export default function BimbinganPage() {
     if (insertError) {
       setError(insertError.message);
     } else {
-      setShowModal(false);
-      setFormData({
-        nama_kegiatan: '',
-        tanggal: '',
-        waktu_mulai: '',
-        waktu_selesai: '',
-        tingkat_target: 1,
-        absenter_group_id: '',
-        access_pin: '',
-      });
+      // Fetch the newly created event to show in share modal
+      const { data: newEvent } = await supabase
+        .from('bimbingan')
+        .select('*')
+        .eq('nama_kegiatan', validation.data.nama_kegiatan)
+        .eq('tanggal', validation.data.tanggal)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (newEvent) {
+        setShowModal(false);
+        setFormData({
+          nama_kegiatan: '',
+          tanggal: '',
+          waktu_mulai: '',
+          waktu_selesai: '',
+          tingkat_target: 1,
+          absenter_group_id: '',
+          access_pin: '',
+        });
+        setSuccessSplash(newEvent as Bimbingan);
+        setTimeout(() => {
+          setSuccessSplash(null);
+          setShareModal({ open: true, event: newEvent as Bimbingan });
+        }, 2500); // Tampilkan splash selama 2.5 detik
+      }
+      
       fetchEvents();
     }
     setIsSubmitting(false);
@@ -157,6 +188,35 @@ export default function BimbinganPage() {
     }
     setIsSubmitting(false);
   };
+
+  // Render Splash Screen if active
+  if (successSplash) {
+    return (
+      <div className="fixed inset-0 z-[200] bg-surface-950 flex flex-col items-center justify-center p-6 transition-opacity duration-500 animate-in fade-in">
+        <div className="relative animate-jedag-jedug rounded-full shadow-[0_0_40px_rgba(37,99,235,0.3)] mb-8">
+          <div className="w-40 h-40 rounded-full overflow-hidden bg-white border-4 border-white flex items-center justify-center shadow-2xl">
+            {currentUserProfile?.avatar_url ? (
+              <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-5xl font-bold text-primary-600">
+                {currentUserProfile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="text-center space-y-2 animate-pulse">
+          <div className="flex items-center justify-center gap-2 text-emerald-400 mb-2">
+            <CheckCircle2 className="w-6 h-6" />
+            <span className="font-bold tracking-widest uppercase text-sm">Berhasil Membuat Event</span>
+          </div>
+          <h2 className="text-2xl font-bold text-surface-100">
+            {currentUserProfile?.full_name?.split(' ')[0] || 'Developer'}, Link & Barcode Siap!
+          </h2>
+          <p className="text-surface-200/60 text-sm">Menyiapkan Portal...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
